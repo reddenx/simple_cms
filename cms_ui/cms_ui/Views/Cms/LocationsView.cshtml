@@ -1,0 +1,75 @@
+﻿<script src="~/Scripts/CmsApiProxy.js" type="text/javascript"></script>
+
+<div id="bound-context">
+    Locations:
+    <ul>
+        <li v-for="location in locations">
+            <a v-bind:href="'/cms/location/' + location.id">
+                {{ location.name }}
+            </a>
+        </li>
+    </ul>
+
+    Content:
+    <ul>
+        <li v-for="content in allContent">
+            <a v-bind:href="'/cms/content/' + content.id">
+                {{ content.name }}
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+    new Vue({
+        el: '#bound-context',
+        data: {
+            locations: [],
+            allContent: [],
+            cmsApi: new CmsApiProxy(),
+        },
+        methods: {
+            Initialize: function () {
+                var self = this;
+                this.cmsApi.GetAllLocations().done(function (data) {
+                    if (data) {
+                        self.locations = [];
+                        data.forEach(function (item, index) {
+                            self.locations.push({
+                                name: item.Name,
+                                id: item.Id,
+                            });
+                        });
+                    }
+                });
+
+                this.cmsApi.GetAllContent().done(function (data) {
+                    if (data) {
+                        self.allContent = [];
+                        data.forEach(function (item, index) {
+                            self.allContent.push({
+                                id: item.Id,
+                                name: item.Name,
+                            });
+                        });
+                    }
+                });
+
+                $.ajax({
+                    url: '/json/version',
+                    type: 'GET',
+                    data: {}
+                }).done(function (response) {
+                    if (response) {
+                        self.versions = response;
+                    }
+                })
+                .fail(function () {
+                    console.error('failed test call to api')
+                })
+                .always(function () {
+                });
+            }
+        }
+    }).Initialize();
+</script>

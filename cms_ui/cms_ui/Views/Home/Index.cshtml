@@ -1,0 +1,38 @@
+﻿<div id="bound-context">
+    Hello World!
+
+    <ul>
+        <li v-for="version in versions">
+            {{ version }}
+        </li>
+    </ul>
+
+</div>
+
+<script>
+    new Vue({
+        el: '#bound-context',
+        data: {
+            versions: []
+        },
+        methods: {
+            Initialize: function () {
+                var self = this;
+                $.ajax({
+                    url: '/json/version',
+                    type: 'GET',
+                    data: {}
+                }).done(function (response) {
+                    if (response) {
+                        self.versions = response;
+                    }
+                })
+                .fail(function () {
+                    console.error('failed test call to api')
+                })
+                .always(function () {
+                });
+            }
+        }
+    }).Initialize();
+</script>
